@@ -2,13 +2,16 @@ package pio
 
 import (
 	"bytes"
-	"github.com/pkg/errors"
+	"errors"
 	"io/ioutil"
 	"net/http"
 )
 
 func requestPIO(URL string, JSON []byte) ([]byte, error) {
 	req, err := http.NewRequest("POST", URL, bytes.NewBuffer(JSON))
+	if err != nil {
+		return nil, errors.New("make http req error")
+	}
 	req.Header.Set("Content-Type", "application/json")
 
 	client := &http.Client{}
@@ -19,10 +22,10 @@ func requestPIO(URL string, JSON []byte) ([]byte, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 400 {
-		return nil, errors.New("Invalid access key")
+		return nil, errors.New("invalid access key")
 
 	} else if resp.StatusCode == 401 {
-		return nil, errors.New("Invalid format, content error")
+		return nil, errors.New("invalid format, content error")
 
 	}
 
