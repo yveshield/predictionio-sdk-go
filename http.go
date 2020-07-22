@@ -1,38 +1,33 @@
 package pio
 
 import (
-	"bytes"
 	"errors"
-	"io/ioutil"
-	"net/http"
+
+	"github.com/valyala/fasthttp"
 )
 
 func requestPIO(URL string, JSON []byte) ([]byte, error) {
-	req, err := http.NewRequest("POST", URL, bytes.NewBuffer(JSON))
-	if err != nil {
-		return nil, errors.New("make http req error")
-	}
-	req.Header.Set("Content-Type", "application/json")
+	req := &fasthttp.Request{}
+	req.SetRequestURI(URL)
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
+	req.SetBody(JSON)
 
-	if resp.StatusCode == 400 {
-		return nil, errors.New("invalid access key")
+	req.Header.SetContentType("application/json")
+	req.Header.SetMethod("POST")
 
-	} else if resp.StatusCode == 401 {
-		return nil, errors.New("invalid format, content error")
+	resp := &fasthttp.Response{}
 
-	}
+	client := &fasthttp.Client{}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	err := client.Do(req, resp)
 	if err != nil {
 		return nil, err
 	}
 
-	return body, nil
+	statusCode := resp.StatusCode()
+	body := resp.Body()
+	if statusCode >= 200 && statusCode < 226 {
+		return body, nil
+	}
+	return nil, errors.New(string(body))
 }
