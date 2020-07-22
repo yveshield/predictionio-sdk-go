@@ -16,6 +16,7 @@ func requestPIO(URL string, JSON []byte) ([]byte, error) {
 	req.Header.SetMethod("POST")
 
 	resp := &fasthttp.Response{}
+	defer resp.ConnectionClose()
 
 	client := &fasthttp.Client{}
 
@@ -26,7 +27,7 @@ func requestPIO(URL string, JSON []byte) ([]byte, error) {
 
 	statusCode := resp.StatusCode()
 	body := resp.Body()
-	if statusCode >= 200 && statusCode < 226 {
+	if statusCode >= 200 && statusCode <= 226 {
 		return body, nil
 	}
 	return nil, errors.New(string(body))
