@@ -12,9 +12,9 @@ type Event struct {
 	Event            string                 `json:"event"`
 	EntityType       string                 `json:"entityType"`
 	EntityID         string                 `json:"entityId"`
-	TargetEntityType string                 `json:"targetEntityType"`
-	TargetEntityID   string                 `json:"targetEntityId"`
-	Properties       map[string]interface{} `json:"properties"`
+	TargetEntityType string                 `json:"targetEntityType,omitempty"`
+	TargetEntityID   string                 `json:"targetEntityId,omitempty"`
+	Properties       map[string]interface{} `json:"properties,omitempty"`
 	EventTime        time.Time              `json:"eventTime"`
 }
 
