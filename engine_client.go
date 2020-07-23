@@ -17,7 +17,7 @@ func NewEngineClient(HOST string) *EngineClient {
 }
 
 func (client *EngineClient) Query(query interface{}) ([]byte, error) {
-	URL := fmt.Sprintf("%s/query.json", client.HOST)
+	URL := fmt.Sprintf("%s/queries.json", client.HOST)
 
 	JSON, err := json.Marshal(query)
 	if err != nil {
